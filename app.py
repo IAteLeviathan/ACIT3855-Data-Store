@@ -13,7 +13,14 @@ import json
 from threading import Thread
 from flask_cors import CORS, cross_origin
 
-DB_ENGINE = create_engine('sqlite:///readings.sqlite')
+with open('app_conf.yaml', 'r') as f:
+    app_conf = yaml.safe_load(f.read())
+
+DB_ENGINE = create_engine('mysql+pymysql://' 
++ app_conf['datastore']['user'] 
++ ":" + app_conf['datastore']['password'] + "@" 
++ app_conf['datastore']['hostname'] + ":" 
++ app_conf['datastore']['port'] + '/' + app_conf['datastore']['db'])
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
